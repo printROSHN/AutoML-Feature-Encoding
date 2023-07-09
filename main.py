@@ -1,7 +1,7 @@
 from operator import index
 import streamlit as st
-import plotly.express as px
-from pycaret.regression import setup, compare_models, pull, save_model, load_model
+#import plotly.express as px
+#from pycaret.regression import setup, compare_models, pull, save_model, load_model
 import pandas_profiling
 import pandas as pd
 from streamlit_pandas_profiling import st_profile_report
@@ -92,6 +92,7 @@ if choice == "Encoding":
         pipe = lazy.print_pipeline()
         html_content = estimator_html_repr(pipe)
         st.markdown(html_content, unsafe_allow_html=True)
+        
 
 
 
@@ -109,7 +110,7 @@ if choice == "Encoding":
 #         st.write("Go RUN Encoding First :)")
 
 # if choice == "Download":
-#     st.write("Download Your Model !!")
+#     st.write("Download Encoded CSV !!")
 #     with open('best_model.pkl', 'rb') as f:
-#         st.download_button('Download Model', f, file_name="best_model.pkl")
+#         st.download_button('Download Model', f, file_name="encoded.csv")
 
