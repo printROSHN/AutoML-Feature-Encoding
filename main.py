@@ -10,8 +10,7 @@ from sklearn import set_config
 from sklearn.pipeline import Pipeline
 from sklearn.utils import estimator_html_repr
 import os
-from sklearn import tree
-import graphviz
+
 
 
 
