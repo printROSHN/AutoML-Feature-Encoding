@@ -10,6 +10,8 @@ from sklearn import set_config
 from sklearn.pipeline import Pipeline
 from sklearn.utils import estimator_html_repr
 import os
+from sklearn import tree
+import graphviz
 
 
 
@@ -21,10 +23,12 @@ with st.sidebar:
     st.image("https://www.onepointltd.com/wp-content/uploads/2020/03/inno2.png")
     st.title("AutoEncode-Internal")
     choice = st.radio(
-        "Navigation", ["Upload", "Profiling", "Encoding"])
-    st.info("This project application helps you build and explore your data.")
+        "Navigation", ["Upload", "Profiling", "Encoding","Download"])
+    st.info("This project application helps in Feature Encoding")
 
 if choice == "Upload":
+    st.cache_data.clear()
+
     st.title("Upload Your Dataset")
     file = st.file_uploader("Upload Your Dataset")
     if file:
@@ -33,20 +37,30 @@ if choice == "Upload":
         st.dataframe(df)
 
 if choice == "Profiling":
+    st.cache_data.clear()
+
     st.title("Exploratory Data Analysis")
     profile_df = ProfileReport(df,minimal=True)
+    
     st_profile_report(profile_df)
 
 
 if choice == "Encoding":
+    st.cache_data.clear()
+    st.cache_resource.clear()
+
     # 1. read target column
     chosen_target = st.selectbox('Choose the Target Column', df.columns)
     
 
     # 2. Train test split & Data cleaning
-    null_columns = df.columns[df.isnull().mean() > 0.6]
-    df = df.drop(null_columns,axis=1)
-    X, y = df.drop(chosen_target, axis=1), df[chosen_target]
+
+    # null_columns = df.columns[df.isnull().mean() > 0.6]
+    # df = df.drop(null_columns,axis=1)
+
+    X = df.drop(chosen_target, axis=1)
+    y = df[chosen_target]
+    
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42)
 
@@ -56,7 +70,10 @@ if choice == "Encoding":
     "sum","loo","base","woe","james"]
     scalers_choice = ["None","std","minmax","robust","maxabs"]
     target_encode = True
-    imbalanced_data = True
+    profile_df = ProfileReport(df,minimal=True)
+
+
+
     has_datetime_column = any(df[col].dtype == 'datetime64[ns]' for col in df.columns)
 
     #choose encoder
@@ -64,52 +81,34 @@ if choice == "Encoding":
     scalers_choice = st.selectbox('Choose the Scalers', scalers_choice)
 
     if(st.button("Encode !")):
-        
-        #setting imbalance columns -> Other
-
-        # for i in df.columns:
-        #     df[i].mask(df[i].map(df[i].value_counts(normalize=True)) < 0.01, 'Other')
-        # df = df.drop('Other', axis=1)
 
         #LAZYTRANSFORMER
         lazy = LazyTransformer(model=None, encoders=encoder, scalers=scalers_choice, 
-            date_to_string=has_datetime_column, transform_target=target_encode, imbalanced=True,
+            date_to_string=has_datetime_column, transform_target=target_encode, #imbalanced=imbalance_value,
             combine_rare=False, verbose=0)
         X_trainm, y_trainm = lazy.fit_transform(X_train, y_train)
         X_testm = lazy.transform(X_test)
         ch_target = y_trainm
 
         # 4. Print Pipeline
+
         st.dataframe(X_trainm)
-        #st.dataframe(y_trainm)
         X,y,tar = X_trainm,y_trainm,chosen_target
 
-        # Display the pipeline visualization in Streamlit app
-        #pipe = lazy.print_pipeline()
-        
-        st.write("Pipeline Visualization")
-        pipe = lazy.print_pipeline()
+        yy = pd.DataFrame(data=y)
+        new_dataframe = pd.concat([
+            X,
+            yy
+        ], axis=1, ignore_index=True)
+
+
+        pipe = lazy.plot_pipeline()
         html_content = estimator_html_repr(pipe)
         st.markdown(html_content, unsafe_allow_html=True)
-        
 
 
 
-        
-# if choice == "Model":
-#     if st.button('Run Modelling') and len(X) != 0:
-#         setup(X, target=tar)
-#         setup_df = pull()
-#         st.dataframe(setup_df)
-#         best_model = compare_models()
-#         compare_df = pull()
-#         st.dataframe(compare_df)
-#         save_model(best_model, 'best_model')
-#     else:
-#         st.write("Go RUN Encoding First :)")
-
-# if choice == "Download":
-#     st.write("Download Encoded CSV !!")
-#     with open('best_model.pkl', 'rb') as f:
-#         st.download_button('Download Model', f, file_name="encoded.csv")
-
+if choice == "Download":
+    st.write("Download Encoded CSV !!")
+    with open('encoded_dataset.csv', 'r') as f:
+        st.download_button('Download', f, file_name="encoded.csv")
