@@ -46,3 +46,34 @@ if choice == "Machine Learning":
 if choice == "Download":
     with open("best_model.pkl", 'rb') as f: 
         st.download_button("Download Model", f, "best_model_test.pkl")
+
+
+# numpy~=1.20.3
+# pandas~=1.2.4
+# scikit-learn~=0.24.2
+# python-dateutil~=2.8.1
+# lightgbm>=3.2.1
+# imbalanced-learn>=0.8.0
+# matplotlib~=3.4.2
+# category-encoders~=2.2.2
+# tqdm~=4.61.1
+# Analysis
+
+# shap>=0.38.0
+# interpret>=0.2.7
+# umap-learn>=0.5.2
+# pandas-profiling>=3.1.0
+# explainerdashboard>=0.3.8  # For dashboard method
+# Flask==2.2.3  # https://github.com/oegedijk/explainerdashboard/issues/259
+# bokeh<3.0.0  # For autoviz
+# autoviz>=0.1.36  # For EDA method
+# fairlearn==0.7.0  # For check_fairness method
+# deepchecks>=0.9.2  # For deep_check method
+# streamlit==0.88.0
+# pandas-profiling==3.1.0
+# streamlit-pandas-profiling==0.1.3
+# scikit-learn==0.24.2
+# numpy==1.20.3 
+# pandas==1.2.5 
+# tqdm==4.61.2
+# lazytransform==1.1
