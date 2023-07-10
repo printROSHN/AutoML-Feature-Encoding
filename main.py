@@ -2,6 +2,7 @@ import streamlit as st
 #import plotly.express as px
 #from pycaret.regression import setup, compare_models, pull, save_model, load_model
 import pandas as pd
+from pandas_profiling import ProfileReport
 from streamlit_pandas_profiling import st_profile_report
 from sklearn.model_selection import train_test_split
 from lazytransform import LazyTransformer
@@ -33,7 +34,7 @@ if choice == "Upload":
 
 if choice == "Profiling":
     st.title("Exploratory Data Analysis")
-    profile_df = df.profile_report()
+    profile_df = ProfileReport(df,minimal=True)
     st_profile_report(profile_df)
 
 
